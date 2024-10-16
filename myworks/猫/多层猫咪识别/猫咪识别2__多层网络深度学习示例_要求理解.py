@@ -1,7 +1,24 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import h5py
+import matplotlib.pyplot as plt
+import scipy   
+from PIL import Image
+from scipy import ndimage
+from lr_utils import load_dataset
 
+
+
+num_px = 64
+
+
+plt.rcParams['figure.figsize'] = (5.0, 4.0) # set default size of plots
+plt.rcParams['image.interpolation'] = 'nearest'
+plt.rcParams['image.cmap'] = 'gray'
+
+
+
+
+    
 
 def sigmoid(Z):
     """
@@ -85,11 +102,11 @@ def sigmoid_backward(dA, cache):
 
 
 def load_data():
-    train_dataset = h5py.File('datasets/train_catvnoncat.h5', "r")
+    train_dataset = h5py.File('猫/datasets/train_catvnoncat.h5', "r")
     train_set_x_orig = np.array(train_dataset["train_set_x"][:]) # your train set features
     train_set_y_orig = np.array(train_dataset["train_set_y"][:]) # your train set labels
 
-    test_dataset = h5py.File('datasets/test_catvnoncat.h5', "r")
+    test_dataset = h5py.File('猫/datasets/test_catvnoncat.h5', "r")
     test_set_x_orig = np.array(test_dataset["test_set_x"][:]) # your test set features
     test_set_y_orig = np.array(test_dataset["test_set_y"][:]) # your test set labels
 
@@ -99,41 +116,7 @@ def load_data():
     test_set_y_orig = test_set_y_orig.reshape((1, test_set_y_orig.shape[0]))
     
     return train_set_x_orig, train_set_y_orig, test_set_x_orig, test_set_y_orig, classes
-
-
-def initialize_parameters(n_x, n_h, n_y):
-    """
-    Argument:
-    n_x -- size of the input layer
-    n_h -- size of the hidden layer
-    n_y -- size of the output layer
-    
-    Returns:
-    parameters -- python dictionary containing your parameters:
-                    W1 -- weight matrix of shape (n_h, n_x)
-                    b1 -- bias vector of shape (n_h, 1)
-                    W2 -- weight matrix of shape (n_y, n_h)
-                    b2 -- bias vector of shape (n_y, 1)
-    """
-    
-    np.random.seed(1)
-    
-    W1 = np.random.randn(n_h, n_x)*0.01
-    b1 = np.zeros((n_h, 1))
-    W2 = np.random.randn(n_y, n_h)*0.01
-    b2 = np.zeros((n_y, 1))
-    
-    assert(W1.shape == (n_h, n_x))
-    assert(b1.shape == (n_h, 1))
-    assert(W2.shape == (n_y, n_h))
-    assert(b2.shape == (n_y, 1))
-    
-    parameters = {"W1": W1,
-                  "b1": b1,
-                  "W2": W2,
-                  "b2": b2}
-    
-    return parameters     
+ # =================================================================================================
 
 
 def initialize_parameters_deep(layer_dims):
@@ -382,55 +365,129 @@ def update_parameters(parameters, grads, learning_rate):
         
     return parameters
 
-def predict(X, y, parameters):
+
+
+
+def sigmoid_to_binary(AL):  
+
+    m = AL.shape[1]
+    Y = np.zeros((1,m))
+    
+    for i in range(m):
+        if AL[0,i]>=0.5:
+            Y[0,i] = 1
+        else:
+            Y[0,i] = 0
+    return Y
+
+
+train_x_orig, train_y, test_x_orig, test_y, classes = load_data()
+
+# Reshape the training and test examples 
+train_x_flatten = train_x_orig.reshape(train_x_orig.shape[0], -1).T   # The "-1" makes reshape flatten the remaining dimensions
+test_x_flatten = test_x_orig.reshape(test_x_orig.shape[0], -1).T
+
+# Standardize data to have feature values between 0 and 1.
+train_x = train_x_flatten/255.
+test_x = test_x_flatten/255.
+
+
+
+
+layers_dims = [12288, 20, 7, 5, 1]     #  5-layer model
+
+
+
+def L_layer_model(X, Y, layers_dims, learning_rate = 0.005, num_iterations = 3000, print_cost=True):  #lr was 0.009
     """
-    This function is used to predict the results of a  L-layer neural network.
+    Implements a L-layer neural network: [LINEAR->RELU]*(L-1)->LINEAR->SIGMOID.
     
     Arguments:
-    X -- data set of examples you would like to label
-    parameters -- parameters of the trained model
+    X -- data, numpy array of shape (number of examples, num_px * num_px * 3)
+    Y -- true "label" vector (containing 0 if cat, 1 if non-cat), of shape (1, number of examples)
+    layers_dims -- list containing the input size and each layer size, of length (number of layers + 1).
+    learning_rate -- learning rate of the gradient descent update rule
+    num_iterations -- number of iterations of the optimization loop
+    print_cost -- if True, it prints the cost every 100 steps
     
     Returns:
-    p -- predictions for the given dataset X
+    parameters -- parameters learnt by the model. They can then be used to predict.
     """
-    
-    m = X.shape[1]
-    n = len(parameters) // 2 # number of layers in the neural network
-    p = np.zeros((1,m))
-    
-    # Forward propagation
-    probas, caches = L_model_forward(X, parameters)
 
+    np.random.seed(1)
+    costs = []                         # keep track of cost
     
-    # convert probas to 0/1 predictions
-    for i in range(0, probas.shape[1]):
-        if probas[0,i] > 0.5:
-            p[0,i] = 1
-        else:
-            p[0,i] = 0
+    # Parameters initialization.
+    ### START CODE HERE ###
+    parameters = initialize_parameters_deep(layers_dims)
+    ### END CODE HERE ###
     
-    #print results
-    #print ("predictions: " + str(p))
-    #print ("true labels: " + str(y))
-    print("Accuracy: "  + str(np.sum((p == y)/m)))
-        
-    return p
+    # Loop (gradient descent)
+    for i in range(num_iterations):
 
-def print_mislabeled_images(classes, X, y, p):
-    """
-    Plots images where predictions and truth were different.
-    X -- dataset
-    y -- true labels
-    p -- predictions
-    """
-    a = p + y
-    mislabeled_indices = np.asarray(np.where(a == 1))
-    plt.rcParams['figure.figsize'] = (40.0, 40.0) # set default size of plots
-    num_images = len(mislabeled_indices[0])
-    for i in range(num_images):
-        index = mislabeled_indices[1][i]
+        # Forward propagation: [LINEAR -> RELU]*(L-1) -> LINEAR -> SIGMOID.
+        ### START CODE HERE ### (≈ 1 line of code)
+        AL, caches =  L_model_forward(X, parameters)
+        ### END CODE HERE ###
         
-        plt.subplot(2, num_images, i + 1)
-        plt.imshow(X[:,index].reshape(64,64,3), interpolation='nearest')
-        plt.axis('off')
-        plt.title("Prediction: " + classes[int(p[0,index])].decode("utf-8") + " \n Class: " + classes[y[0,index]].decode("utf-8"))
+        # Compute cost.
+        ### START CODE HERE ### (≈ 1 line of code)
+        cost = compute_cost(AL, Y)
+        ### END CODE HERE ###
+    
+        # Backward propagation.
+        ### START CODE HERE ### (≈ 1 line of code)
+        grads = L_model_backward(AL, Y, caches)
+        ### END CODE HERE ###
+ 
+        # Update parameters.
+        ### START CODE HERE ### (≈ 1 line of code)
+        parameters = update_parameters(parameters, grads, learning_rate=0.005)
+        ### END CODE HERE ###
+                
+        # Print the cost every 100 training example
+        if print_cost and i % 100 == 0:
+            print ("Cost after iteration %i: %f" %(i, cost))
+        if print_cost and i % 100 == 0:
+            costs.append(cost)
+            
+    # plot the cost
+    plt.plot(np.squeeze(costs))
+    plt.ylabel('cost')
+    plt.xlabel('iterations (per tens)')
+    plt.title("Learning rate =" + str(learning_rate))
+    plt.show()
+    
+    return parameters
+
+
+parameters = L_layer_model(train_x, train_y,layers_dims, num_iterations = 2500, print_cost=True)
+
+
+
+
+
+# my_image = input('导入图片名称：')
+my_image = input('查看猫图中的：')
+    
+fname = "猫/猫图/" + my_image + '.jpg'
+    
+image = Image.open(fname)  
+image_resized = image.resize((num_px, num_px))  
+my_image = np.array(image_resized).reshape((1,num_px*num_px*3)).astype(np.float32).T
+
+
+
+## 对判断样本标准化，否则会使  sigmoid 函数的结果溢出
+my_image /= 255 
+
+## 判断
+plt.imshow(image) # 显示图片
+
+
+AL,caches = L_model_forward(my_image, parameters)
+Y = sigmoid_to_binary(AL)
+if Y[0,0] == 1:
+    print('有猫')
+else:
+    print('无猫')
