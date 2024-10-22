@@ -1,9 +1,9 @@
 # 该代码来自 河南大学的 人工智能理论及算法工程研究中心 公众号！！
-#原名 主动学习
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import WhiteKernel, RBF
+#原名 主动学习 链接：http://mp.weixin.qq.com/s?__biz=Mzg3NjY3MzQ4Mw==&mid=2247493000&idx=1&sn=0a02035d519740691e8fdee3f7a106ea&chksm=ce4069b559ba76e0d60a5dfa99e2d7b75ee7f2d38ea20cdff7713c5b0e6dd8382a85b5558506&mpshare=1&scene=1&srcid=1022H0mMDvAl5DamZNQMHqd3&sharer_shareinfo=7e3d34a47850a154b2f86d283a8add22&sharer_shareinfo_first=7e3d34a47850a154b2f86d283a8add22#rd
+import numpy as np    #python 常用计算库
+import matplotlib.pyplot as plt  #图像库 将效果可视化
+from sklearn.gaussian_process import GaussianProcessRegressor   # 请看截图文件
+from sklearn.gaussian_process.kernels import WhiteKernel, RBF   # 请看截图文件
 from modAL.models import ActiveLearner
 
 
