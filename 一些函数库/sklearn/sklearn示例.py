@@ -9,7 +9,7 @@ from modAL.models import ActiveLearner
 
 
 X = np.random.choice(np.linspace(0, 20, 10000), size=200, replace=False).reshape(-1, 1)
-y = np.cos(X) + np.random.normal(scale=0.3, size=X.shape)  # 使用cos函数
+y = np.cos(X) + np.random.normal(scale=0.3, size=X.shape)  # 使用cos函数 并附加噪声
 
 available_styles = plt.style.available
 style_to_use = 'seaborn-white' if 'seaborn-white' in available_styles else 'default'
