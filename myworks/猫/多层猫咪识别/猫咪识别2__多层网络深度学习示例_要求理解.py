@@ -468,7 +468,7 @@ parameters = L_layer_model(train_x, train_y,layers_dims, num_iterations = 2500, 
 # my_image = input('导入图片名称：')
 my_image = input('查看猫图中的：')
     
-fname = "myworks/猫/多层猫咪识别/猫图" + my_image + '.jpg'
+fname = "myworks/猫/多层猫咪识别/猫图/" + my_image + '.jpg'
     
 image = Image.open(fname)  
 image_resized = image.resize((num_px, num_px))  

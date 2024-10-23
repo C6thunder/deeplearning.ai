@@ -110,8 +110,9 @@ print(f'该模型粗略错误率:{Difquantity}%\t\t({re})')
 # my_image = input('导入图片名称：')
 my_image = input('查看猫图中的：')
     
-fname = "myworks/猫/单层猫咪识别/猫图" + my_image + '.jpg'
-    
+fname = "myworks/猫/单层猫咪识别/猫图/" + my_image + '.jpg'
+
+#/home/thunder/store/githubGit/deeplearning.ai/myworks/猫/单层猫咪识别/猫图/cat1.jpg
 image = Image.open(fname)  
 image_resized = image.resize((num_px, num_px))  
 my_image = np.array(image_resized).reshape((1,num_px*num_px*3)).astype(np.float32).T
