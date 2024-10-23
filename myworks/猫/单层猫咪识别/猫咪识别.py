@@ -24,7 +24,7 @@ C = ['3','7','8','9']
 C1 = [0,0,1,1]
 for i in range(k):
     
-    fname = '猫/猫图/cat'+ C[i] +'.jpg'
+    fname = 'myworks/猫/猫图/cat'+ C[i] +'.jpg'
     image = Image.open(fname)  
     image_resized = image.resize((num_px, num_px))  
     my_image = np.array(image_resized).reshape((1,num_px*num_px*3)).astype(np.float32).T
@@ -110,7 +110,7 @@ print(f'该模型粗略错误率:{Difquantity}%\t\t({re})')
 # my_image = input('导入图片名称：')
 my_image = input('查看猫图中的：')
     
-fname = "猫/猫图/" + my_image + '.jpg'
+fname = "myworks/猫/猫图/" + my_image + '.jpg'
     
 image = Image.open(fname)  
 image_resized = image.resize((num_px, num_px))  
