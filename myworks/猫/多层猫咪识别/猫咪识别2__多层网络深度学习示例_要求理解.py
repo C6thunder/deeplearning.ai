@@ -4,9 +4,6 @@ import matplotlib.pyplot as plt
 import scipy   
 from PIL import Image
 from scipy import ndimage
-from lr_utils import load_dataset
-
-
 
 num_px = 64
 
@@ -18,7 +15,23 @@ plt.rcParams['image.cmap'] = 'gray'
 
 
 
+def load_data():
+    train_dataset = h5py.File('myworks/猫/datasets/train_catvnoncat.h5', "r")
+    train_set_x_orig = np.array(train_dataset["train_set_x"][:]) # your train set features
+    train_set_y_orig = np.array(train_dataset["train_set_y"][:]) # your train set labels
+
+    test_dataset = h5py.File('myworks/猫/datasets/test_catvnoncat.h5', "r")
+    test_set_x_orig = np.array(test_dataset["test_set_x"][:]) # your test set features
+    test_set_y_orig = np.array(test_dataset["test_set_y"][:]) # your test set labels
+
+    classes = np.array(test_dataset["list_classes"][:]) # the list of classes
     
+    train_set_y_orig = train_set_y_orig.reshape((1, train_set_y_orig.shape[0]))
+    test_set_y_orig = test_set_y_orig.reshape((1, test_set_y_orig.shape[0]))
+    
+    return train_set_x_orig, train_set_y_orig, test_set_x_orig, test_set_y_orig, classes
+
+
 
 def sigmoid(Z):
     """
@@ -101,21 +114,6 @@ def sigmoid_backward(dA, cache):
     return dZ
 
 
-def load_data():
-    train_dataset = h5py.File('猫/datasets/train_catvnoncat.h5', "r")
-    train_set_x_orig = np.array(train_dataset["train_set_x"][:]) # your train set features
-    train_set_y_orig = np.array(train_dataset["train_set_y"][:]) # your train set labels
-
-    test_dataset = h5py.File('猫/datasets/test_catvnoncat.h5', "r")
-    test_set_x_orig = np.array(test_dataset["test_set_x"][:]) # your test set features
-    test_set_y_orig = np.array(test_dataset["test_set_y"][:]) # your test set labels
-
-    classes = np.array(test_dataset["list_classes"][:]) # the list of classes
-    
-    train_set_y_orig = train_set_y_orig.reshape((1, train_set_y_orig.shape[0]))
-    test_set_y_orig = test_set_y_orig.reshape((1, test_set_y_orig.shape[0]))
-    
-    return train_set_x_orig, train_set_y_orig, test_set_x_orig, test_set_y_orig, classes
  # =================================================================================================
 
 
@@ -470,7 +468,7 @@ parameters = L_layer_model(train_x, train_y,layers_dims, num_iterations = 2500, 
 # my_image = input('导入图片名称：')
 my_image = input('查看猫图中的：')
     
-fname = "猫/猫图/" + my_image + '.jpg'
+fname = "myworks/猫/多层猫咪识别/猫图" + my_image + '.jpg'
     
 image = Image.open(fname)  
 image_resized = image.resize((num_px, num_px))  

@@ -18,19 +18,19 @@ train_set_x_flatten = train_set_x_orig.reshape(train_set_x_orig.shape[0],-1).T
 test_set_x_flatten = test_set_x_orig.reshape(test_set_x_orig.shape[0],-1).T
  
 
-## 自己导入的图片数据
-k = 4
-C = ['3','7','8','9']
-C1 = [0,0,1,1]
-for i in range(k):
+# ## 自己导入的图片数据
+# k = 4
+# C = ['3','7','8','9']
+# C1 = [0,0,1,1]
+# for i in range(k):
     
-    fname = '猫/猫图/cat'+ C[i] +'.jpg'
-    image = Image.open(fname)  
-    image_resized = image.resize((num_px, num_px))  
-    my_image = np.array(image_resized).reshape((1,num_px*num_px*3)).astype(np.float32).T
-    train_set_x_flatten = np.hstack((train_set_x_flatten, my_image))
-    ep = np.array([[C1[i]]])
-    train_set_y = np.hstack((train_set_y,ep))
+#     fname = '猫/猫图/cat'+ C[i] +'.jpg'                                                
+#     image = Image.open(fname)                                                                                                             
+#     image_resized = image.resize((num_px, num_px))  
+#     my_image = np.array(image_resized).reshape((1,num_px*num_px*3)).astype(np.float32).T
+#     train_set_x_flatten = np.hstack((train_set_x_flatten, my_image))
+#     ep = np.array([[C1[i]]])
+#     train_set_y = np.hstack((train_set_y,ep))
 
 
 
@@ -110,7 +110,7 @@ print(f'该模型粗略错误率:{Difquantity}%\t\t({re})')
 # my_image = input('导入图片名称：')
 my_image = input('查看猫图中的：')
     
-fname = "猫/猫图/" + my_image + '.jpg'
+fname = "myworks/猫/单层猫咪识别/猫图" + my_image + '.jpg'
     
 image = Image.open(fname)  
 image_resized = image.resize((num_px, num_px))  
