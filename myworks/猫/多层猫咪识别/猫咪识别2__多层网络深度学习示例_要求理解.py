@@ -8,6 +8,17 @@ from lr_utils import load_dataset
 
 
 
+import os
+import sys
+
+from pathlib import Path
+
+FILE = Path(__file__).resolve()
+ROOT = FILE.parents[1]  # 目录索引第2个
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))  
+ROOT = Path(os.path.relpath(ROOT, Path.cwd())) 
+
 num_px = 64
 
 
@@ -102,11 +113,11 @@ def sigmoid_backward(dA, cache):
 
 
 def load_data():
-    train_dataset = h5py.File('myworks/猫/datasets/train_catvnoncat.h5', "r")
+    train_dataset = h5py.File(str(ROOT) + '/datasets/train_catvnoncat.h5', "r")
     train_set_x_orig = np.array(train_dataset["train_set_x"][:]) # your train set features
     train_set_y_orig = np.array(train_dataset["train_set_y"][:]) # your train set labels
 
-    test_dataset = h5py.File('myworks/猫/datasets/test_catvnoncat.h5', "r")
+    test_dataset = h5py.File(str(ROOT) + '/datasets/test_catvnoncat.h5', "r")
     test_set_x_orig = np.array(test_dataset["test_set_x"][:]) # your test set features
     test_set_y_orig = np.array(test_dataset["test_set_y"][:]) # your test set labels
 
@@ -470,7 +481,7 @@ parameters = L_layer_model(train_x, train_y,layers_dims, num_iterations = 2500, 
 # my_image = input('导入图片名称：')
 my_image = input('查看猫图中的：')
     
-fname = "myworks/猫/猫图/" + my_image + '.jpg'
+fname = str(ROOT) + "/猫图/" + my_image + '.jpg'
     
 image = Image.open(fname)  
 image_resized = image.resize((num_px, num_px))  

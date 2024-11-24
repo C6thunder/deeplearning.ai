@@ -5,6 +5,17 @@ import scipy
 from PIL import Image
 from scipy import ndimage
 from lr_utils import load_dataset
+import os
+import sys
+
+from pathlib import Path
+
+FILE = Path(__file__).resolve()
+ROOT = FILE.parents[1]  # 目录索引第2个
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))  
+ROOT = Path(os.path.relpath(ROOT, Path.cwd())) 
+
 # %matplotlib inline
 
 train_set_x_orig, train_set_y, test_set_x_orig, test_set_y, classes = load_dataset()
@@ -18,13 +29,15 @@ train_set_x_flatten = train_set_x_orig.reshape(train_set_x_orig.shape[0],-1).T
 test_set_x_flatten = test_set_x_orig.reshape(test_set_x_orig.shape[0],-1).T
  
 
+
+
 ## 自己导入的图片数据
 k = 4
 C = ['3','7','8','9']
 C1 = [0,0,1,1]
 for i in range(k):
     
-    fname = 'myworks/猫/猫图/cat'+ C[i] +'.jpg'
+    fname = str(ROOT) + '/猫图/cat'+ C[i] +'.jpg'
     image = Image.open(fname)  
     image_resized = image.resize((num_px, num_px))  
     my_image = np.array(image_resized).reshape((1,num_px*num_px*3)).astype(np.float32).T
@@ -110,7 +123,7 @@ print(f'该模型粗略错误率:{Difquantity}%\t\t({re})')
 # my_image = input('导入图片名称：')
 my_image = input('查看猫图中的：')
     
-fname = "myworks/猫/猫图/" + my_image + '.jpg'
+fname = str(ROOT) + "/猫图/" + my_image + '.jpg'
     
 image = Image.open(fname)  
 image_resized = image.resize((num_px, num_px))  
@@ -131,7 +144,4 @@ if y[0,0] == 1:
     print('有猫')
 else:
     print('没有猫')
-
  
-    
-
