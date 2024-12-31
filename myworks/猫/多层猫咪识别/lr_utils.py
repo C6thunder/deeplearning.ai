@@ -1,7 +1,16 @@
 import numpy as np
 import h5py
-    
-    
+from pathlib import Path
+import os
+import sys
+
+FILE = Path(__file__).resolve()
+ROOT = FILE.parents[1]  # 目录索引第2个
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))  
+ROOT = Path(os.path.relpath(ROOT, Path.cwd())) 
+ROOT = str(ROOT)    
+
 def load_dataset():
     # train_dataset = h5py.File('datasets/train_catvnoncat.h5', "r")
     train_dataset = h5py.File('/home/thunder/myworks/猫/datasets/train_catvnoncat.h5', "r")

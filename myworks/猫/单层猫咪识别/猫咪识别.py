@@ -18,6 +18,10 @@ ROOT = Path(os.path.relpath(ROOT, Path.cwd()))
 
 # %matplotlib inline
 
+# print(type(ROOT))   # ROOT 为<class 'pathlib.PosixPath'> 而不是str类型
+ 
+# exit()
+
 train_set_x_orig, train_set_y, test_set_x_orig, test_set_y, classes = load_dataset()
 
 num_px = train_set_x_orig.shape[1]
